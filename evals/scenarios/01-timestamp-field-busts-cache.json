@@ -1,0 +1,26 @@
+{
+  "id": "timestamp_field_busts_cache",
+  "description": "A client release adds a per-request `timestamp` field to every chat body at t=300s; the field is part of the cache key.",
+  "question": "Why did the cache hit ratio drop?",
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 1
+  },
+  "incident": {
+    "type": "extra_field",
+    "startS": 300,
+    "field": "timestamp",
+    "tenantShare": 1.0
+  },
+  "expected": {
+    "root_cause": "cache_key_field_busting",
+    "fix": {
+      "path": "cache.ignoreFields",
+      "contains": "timestamp"
+    }
+  }
+}

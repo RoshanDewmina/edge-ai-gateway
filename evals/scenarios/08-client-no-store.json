@@ -1,0 +1,22 @@
+{
+  "id": "client_no_store",
+  "description": "Four of six tenants start sending Cache-Control: no-store at t=300s.",
+  "question": "Why did upstream calls jump?",
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 8
+  },
+  "incident": {
+    "type": "client_no_store",
+    "startS": 300,
+    "tenantShare": 0.67
+  },
+  "expected": {
+    "root_cause": "client_no_store",
+    "fix": null
+  }
+}

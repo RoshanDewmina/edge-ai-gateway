@@ -1,0 +1,43 @@
+{
+  "id": "primary_timeout_too_tight",
+  "description": "Primary latency drifts to ~950ms (sd 200ms) while its timeout is 1000ms, so a large share of calls time out and fall back to the secondary.",
+  "question": "Why are so many requests hitting the secondary provider?",
+  "config": {
+    "upstreams": [
+      {
+        "name": "primary",
+        "url": "mock://primary",
+        "timeoutMs": 1000,
+        "enabled": true
+      },
+      {
+        "name": "secondary",
+        "url": "mock://secondary",
+        "timeoutMs": 3000,
+        "enabled": true
+      }
+    ]
+  },
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 5
+  },
+  "incident": {
+    "type": "provider_latency",
+    "startS": 300,
+    "provider": "primary",
+    "meanMs": 950,
+    "sdMs": 200
+  },
+  "expected": {
+    "root_cause": "upstream_timeout_too_tight",
+    "fix": {
+      "path": "upstreams.0.timeoutMs",
+      "gte": 2000
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "uuid_field_busts_cache_half_tenants",
+  "description": "Half of the tenants start sending a unique `client_request_uuid` field.",
+  "question": "Our LLM bill went up this afternoon. What changed?",
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 2
+  },
+  "incident": {
+    "type": "extra_field",
+    "startS": 300,
+    "field": "client_request_uuid",
+    "tenantShare": 0.5
+  },
+  "expected": {
+    "root_cause": "cache_key_field_busting",
+    "fix": {
+      "path": "cache.ignoreFields",
+      "contains": "client_request_uuid"
+    }
+  }
+}

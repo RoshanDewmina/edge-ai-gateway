@@ -1,0 +1,247 @@
+{
+  "run_at": "2026-10-14T13:11:33.358Z",
+  "mode": "deterministic (no LLM, no API key)",
+  "scenarios": 12,
+  "root_cause_accuracy": "12/12",
+  "fix_accuracy": "12/12",
+  "caveat": "Scenarios and diagnostic rules were written by the same author; this is a regression suite for the copilot, not an independent benchmark of diagnostic skill.",
+  "results": [
+    {
+      "id": "timestamp_field_busts_cache",
+      "question": "Why did the cache hit ratio drop?",
+      "log_lines": 3038,
+      "expected_root_cause": "cache_key_field_busting",
+      "predicted_root_cause": "cache_key_field_busting",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "cache.ignoreFields: [\"user\",\"request_id\",\"metadata\"] -> [\"user\",\"request_id\",\"metadata\",\"timestamp\"]",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys",
+        "cache_key_cardinality",
+        "ttl_churn"
+      ],
+      "other_findings": [],
+      "summary": "Field(s) timestamp vary on almost every request and are part of the cache key, so identical prompts stop sharing entries."
+    },
+    {
+      "id": "uuid_field_busts_cache_half_tenants",
+      "question": "Our LLM bill went up this afternoon. What changed?",
+      "log_lines": 3127,
+      "expected_root_cause": "cache_key_field_busting",
+      "predicted_root_cause": "cache_key_field_busting",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "cache.ignoreFields: [\"user\",\"request_id\",\"metadata\"] -> [\"user\",\"request_id\",\"metadata\",\"client_request_uuid\"]",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys",
+        "cache_key_cardinality",
+        "ttl_churn"
+      ],
+      "other_findings": [],
+      "summary": "Field(s) client_request_uuid vary on almost every request and are part of the cache key, so identical prompts stop sharing entries."
+    },
+    {
+      "id": "ttl_misconfigured",
+      "question": "Hit ratio fell right after this morning's deploy. Why?",
+      "log_lines": 3031,
+      "expected_root_cause": "ttl_too_short",
+      "predicted_root_cause": "ttl_too_short",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "cache.ttlSeconds: 5 -> 300",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys",
+        "cache_key_cardinality",
+        "ttl_churn"
+      ],
+      "other_findings": [],
+      "summary": "Entries expire after 5s and the same keys are refetched every ~31.9s."
+    },
+    {
+      "id": "primary_5xx_spike",
+      "question": "Why is p95 latency up?",
+      "log_lines": 2920,
+      "expected_root_cause": "primary_provider_errors",
+      "predicted_root_cause": "primary_provider_errors",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "upstreams.0.enabled: true -> false",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys"
+      ],
+      "other_findings": [],
+      "summary": "primary is failing (16% errors overall, peak 48.6% per minute); requests are falling back to secondary."
+    },
+    {
+      "id": "primary_timeout_too_tight",
+      "question": "Why are so many requests hitting the secondary provider?",
+      "log_lines": 3041,
+      "expected_root_cause": "upstream_timeout_too_tight",
+      "predicted_root_cause": "upstream_timeout_too_tight",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "upstreams.0.timeoutMs: 1000 -> 2500",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys",
+        "cache_key_cardinality",
+        "ttl_churn"
+      ],
+      "other_findings": [],
+      "summary": "primary is slow but healthy: 11.2% of calls hit the 1000ms timeout while successful calls already take p95 954ms."
+    },
+    {
+      "id": "tenant_hammering",
+      "question": "Customers are reporting 429s. Is the rate limiter broken?",
+      "log_lines": 7484,
+      "expected_root_cause": "rate_limit_hot_key",
+      "predicted_root_cause": "rate_limit_hot_key",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "correctly proposed no config change",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys"
+      ],
+      "other_findings": [],
+      "summary": "One key (e4dde33807b1) receives 100% of all 429s at up to 28 req/s; other tenants are unaffected. The limiter is doing its job."
+    },
+    {
+      "id": "rate_limit_too_low",
+      "question": "Customers are reporting 429s. Is the rate limiter broken?",
+      "log_lines": 3077,
+      "expected_root_cause": "rate_limit_too_low",
+      "predicted_root_cause": "rate_limit_too_low",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "rateLimit.refillPerSecond: 0.2 -> 1.4",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys"
+      ],
+      "other_findings": [],
+      "summary": "429s are spread across 6 of 6 keys, so the limit is below normal per-tenant demand rather than one abusive client."
+    },
+    {
+      "id": "client_no_store",
+      "question": "Why did upstream calls jump?",
+      "log_lines": 3010,
+      "expected_root_cause": "client_no_store",
+      "predicted_root_cause": "client_no_store",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "correctly proposed no config change",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys"
+      ],
+      "other_findings": [],
+      "summary": "Clients started sending Cache-Control: no-store, so the gateway (correctly) skips the cache."
+    },
+    {
+      "id": "temperature_bump",
+      "question": "Why did the cache stop working for some clients?",
+      "log_lines": 2984,
+      "expected_root_cause": "nondeterministic_requests",
+      "predicted_root_cause": "nondeterministic_requests",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "correctly proposed no config change",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys",
+        "cache_key_cardinality",
+        "ttl_churn"
+      ],
+      "other_findings": [],
+      "summary": "Clients started sending temperature > 0; non-deterministic requests are never cached by design."
+    },
+    {
+      "id": "novel_traffic",
+      "question": "Why did the cache hit ratio drop?",
+      "log_lines": 3049,
+      "expected_root_cause": "novel_traffic",
+      "predicted_root_cause": "novel_traffic",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "correctly proposed no config change",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys",
+        "cache_key_cardinality",
+        "ttl_churn"
+      ],
+      "other_findings": [],
+      "summary": "Traffic shifted to prompts the cache has not seen; no single field or TTL explains it."
+    },
+    {
+      "id": "healthy_control",
+      "question": "Anything wrong with the gateway today?",
+      "log_lines": 2968,
+      "expected_root_cause": "healthy",
+      "predicted_root_cause": "healthy",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "correctly proposed no config change",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys"
+      ],
+      "other_findings": [],
+      "summary": "No incident detected: hit ratio stable, providers healthy, no rate-limit pressure."
+    },
+    {
+      "id": "healthy_leading_question",
+      "question": "Why did the cache hit ratio drop?",
+      "log_lines": 3098,
+      "expected_root_cause": "healthy",
+      "predicted_root_cause": "healthy",
+      "root_cause_correct": true,
+      "fix_correct": true,
+      "fix_detail": "correctly proposed no config change",
+      "tools_called": [
+        "cache_overview",
+        "hit_ratio_windows",
+        "provider_health",
+        "rate_limit_hot_keys",
+        "cache_key_cardinality",
+        "ttl_churn"
+      ],
+      "other_findings": [],
+      "summary": "No incident detected: hit ratio stable, providers healthy, no rate-limit pressure."
+    }
+  ],
+  "seed_sweep": {
+    "seeds_per_scenario": 10,
+    "runs": 120,
+    "root_cause_correct": 120,
+    "fix_correct": 120,
+    "failures": []
+  }
+}

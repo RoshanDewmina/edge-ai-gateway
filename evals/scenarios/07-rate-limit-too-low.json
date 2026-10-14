@@ -1,0 +1,30 @@
+{
+  "id": "rate_limit_too_low",
+  "description": "A config change at t=300s shrinks the bucket to 5 burst / 0.2 per s, below every tenant's normal rate.",
+  "question": "Customers are reporting 429s. Is the rate limiter broken?",
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 7
+  },
+  "incident": {
+    "type": "config_change",
+    "startS": 300,
+    "config": {
+      "rateLimit": {
+        "capacity": 5,
+        "refillPerSecond": 0.2
+      }
+    }
+  },
+  "expected": {
+    "root_cause": "rate_limit_too_low",
+    "fix": {
+      "path": "rateLimit.refillPerSecond",
+      "gtCurrent": true
+    }
+  }
+}

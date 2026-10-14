@@ -1,0 +1,23 @@
+{
+  "id": "temperature_bump",
+  "description": "Half of the tenants switch to temperature 0.7 at t=300s; non-deterministic calls are never cached.",
+  "question": "Why did the cache stop working for some clients?",
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 9
+  },
+  "incident": {
+    "type": "temperature",
+    "startS": 300,
+    "tenantShare": 0.5,
+    "value": 0.7
+  },
+  "expected": {
+    "root_cause": "nondeterministic_requests",
+    "fix": null
+  }
+}

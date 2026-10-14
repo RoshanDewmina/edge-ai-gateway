@@ -1,0 +1,29 @@
+{
+  "id": "tenant_hammering",
+  "description": "One tenant starts sending 15 req/s at t=300s (others ~0.8 req/s each); bucket is 60 burst / 1 per s.",
+  "question": "Customers are reporting 429s. Is the rate limiter broken?",
+  "config": {
+    "rateLimit": {
+      "capacity": 60,
+      "refillPerSecond": 1
+    }
+  },
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 6
+  },
+  "incident": {
+    "type": "tenant_flood",
+    "startS": 300,
+    "tenant": 0,
+    "rps": 15
+  },
+  "expected": {
+    "root_cause": "rate_limit_hot_key",
+    "fix": null
+  }
+}

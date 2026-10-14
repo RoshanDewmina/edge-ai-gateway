@@ -1,0 +1,22 @@
+{
+  "id": "novel_traffic",
+  "description": "A new product surface sends mostly never-seen prompts from t=300s; nothing is misconfigured.",
+  "question": "Why did the cache hit ratio drop?",
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 10
+  },
+  "incident": {
+    "type": "novel_traffic",
+    "startS": 300,
+    "poolSize": 5000
+  },
+  "expected": {
+    "root_cause": "novel_traffic",
+    "fix": null
+  }
+}

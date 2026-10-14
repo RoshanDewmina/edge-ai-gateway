@@ -1,0 +1,26 @@
+{
+  "id": "primary_5xx_spike",
+  "description": "The primary provider starts returning 5xx on 40% of calls at t=300s; the secondary is healthy.",
+  "question": "Why is p95 latency up?",
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 4
+  },
+  "incident": {
+    "type": "provider_errors",
+    "startS": 300,
+    "provider": "primary",
+    "failureRate": 0.4
+  },
+  "expected": {
+    "root_cause": "primary_provider_errors",
+    "fix": {
+      "path": "upstreams.0.enabled",
+      "equals": false
+    }
+  }
+}

@@ -20,5 +20,8 @@
     "evals": "bun evals/run.ts",
     "copilot": "bun copilot/cli.ts"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0"
+  }
 }

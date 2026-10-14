@@ -1,0 +1,20 @@
+{
+  "id": "healthy_control",
+  "description": "No incident: steady traffic with background noise (1% primary errors, 5% temperature>0).",
+  "question": "Anything wrong with the gateway today?",
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 11
+  },
+  "incident": {
+    "type": "none"
+  },
+  "expected": {
+    "root_cause": "healthy",
+    "fix": null
+  }
+}

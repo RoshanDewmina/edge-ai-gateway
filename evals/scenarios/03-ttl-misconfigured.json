@@ -1,0 +1,30 @@
+{
+  "id": "ttl_misconfigured",
+  "description": "A deploy at t=300s sets cache.ttlSeconds from 300 to 5 (and disables stale-while-revalidate).",
+  "question": "Hit ratio fell right after this morning's deploy. Why?",
+  "traffic": {
+    "durationS": 600,
+    "rps": 5,
+    "tenants": 6,
+    "prompts": 60,
+    "zipf": 1.1,
+    "seed": 3
+  },
+  "incident": {
+    "type": "config_change",
+    "startS": 300,
+    "config": {
+      "cache": {
+        "ttlSeconds": 5,
+        "staleWhileRevalidateSeconds": 0
+      }
+    }
+  },
+  "expected": {
+    "root_cause": "ttl_too_short",
+    "fix": {
+      "path": "cache.ttlSeconds",
+      "gte": 60
+    }
+  }
+}
