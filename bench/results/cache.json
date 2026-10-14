@@ -1,0 +1,80 @@
+{
+  "kind": "cache",
+  "run_at": "2026-10-14T13:03:29.769Z",
+  "env": {
+    "os": "darwin arm64",
+    "cpu": "Apple M4",
+    "bun": "1.3.9",
+    "note": "Local run: wrangler dev (workerd) on one machine against a simulated provider (Bun mock upstream). Not a production or real-provider measurement."
+  },
+  "params": {
+    "requests": 2000,
+    "distinct_prompt_templates": 200,
+    "zipf_s": 1,
+    "concurrency": 16,
+    "upstream_latency_ms": 700,
+    "cosmetic_variation_share": 0.2,
+    "temperature": 0,
+    "tenants": 1
+  },
+  "distinct_prompts_requested": 189,
+  "wall_clock_s": 10.74,
+  "status_counts": {
+    "200": 2000
+  },
+  "by_cache": {
+    "HIT": 1765,
+    "STALE": 0,
+    "MISS": 235,
+    "BYPASS": 0,
+    "NONE": 0
+  },
+  "hit_ratio": 0.8825,
+  "client_latency": {
+    "HIT": {
+      "n": 1765,
+      "p50_ms": 5.2,
+      "p95_ms": 18.6
+    },
+    "MISS": {
+      "n": 235,
+      "p50_ms": 702.4,
+      "p95_ms": 773.5
+    }
+  },
+  "upstream_calls": 189,
+  "upstream_calls_avoided_pct": 90.55,
+  "gateway_metrics": {
+    "requests": 2000,
+    "by_cache": {
+      "HIT": 1765,
+      "STALE": 0,
+      "MISS": 235,
+      "BYPASS": 0,
+      "NONE": 0
+    },
+    "hit_ratio": 0.8825,
+    "latency_ms": {
+      "MISS": {
+        "n": 235,
+        "p50": 699,
+        "p95": 767
+      },
+      "HIT": {
+        "n": 1765,
+        "p50": 2,
+        "p95": 7
+      }
+    },
+    "upstream_calls": 189,
+    "upstream_calls_avoided": 1811,
+    "fallbacks": 0,
+    "coalesced": 46,
+    "errors_by_provider": {},
+    "status": {
+      "200": 2000
+    },
+    "rate_limited": 0,
+    "window_note": "counters since last reset; latency percentiles over the last 5000 requests per cache status"
+  }
+}

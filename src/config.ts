@@ -35,7 +35,8 @@ export type EnvOverrides = Partial<
     | "RATE_LIMIT_REFILL_PER_SEC"
     | "FALLBACK_ENABLED"
     | "CACHE_TTL_SECONDS"
-    | "UPSTREAM_TIMEOUT_MS",
+    | "UPSTREAM_TIMEOUT_MS"
+    | "CIRCUIT_FAILURE_THRESHOLD",
     string
   >
 >;
@@ -52,6 +53,7 @@ export function resolveConfig(env: EnvOverrides, base: GatewayConfig = DEFAULT_C
   cfg.rateLimit.capacity = num(env.RATE_LIMIT_CAPACITY) ?? cfg.rateLimit.capacity;
   cfg.rateLimit.refillPerSecond = num(env.RATE_LIMIT_REFILL_PER_SEC) ?? cfg.rateLimit.refillPerSecond;
   cfg.cache.ttlSeconds = num(env.CACHE_TTL_SECONDS) ?? cfg.cache.ttlSeconds;
+  cfg.circuitBreaker.failureThreshold = num(env.CIRCUIT_FAILURE_THRESHOLD) ?? cfg.circuitBreaker.failureThreshold;
   if (env.FALLBACK_ENABLED !== undefined) cfg.fallback.enabled = env.FALLBACK_ENABLED !== "false";
   return cfg;
 }
