@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "lib": ["es2022", "dom"],
+    "types": ["bun"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "include": ["copilot/**/*.ts", "evals/**/*.ts", "bench/**/*.ts", "mock-upstream/**/*.ts", "test/unit/**/*.ts", "test/bun/**/*.ts", "src/cacheKey.ts", "src/upstream.ts", "src/gateway.ts", "src/metrics.ts", "src/tokenBucket.ts", "src/circuitBreaker.ts", "src/mockUpstream.ts", "src/hash.ts", "src/config.ts", "src/types.ts"]
+}

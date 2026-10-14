@@ -1,0 +1,27 @@
+{
+  "cache": {
+    "enabled": true,
+    "ttlSeconds": 300,
+    "staleWhileRevalidateSeconds": 60,
+    "maxCacheableTemperature": 0,
+    "scope": "tenant",
+    "keyVersion": 1,
+    "caseFold": true,
+    "ignoreFields": ["user", "request_id", "metadata"]
+  },
+  "rateLimit": {
+    "capacity": 120,
+    "refillPerSecond": 2
+  },
+  "upstreams": [
+    { "name": "primary", "url": "mock://primary", "timeoutMs": 3000, "enabled": true },
+    { "name": "secondary", "url": "mock://secondary", "timeoutMs": 3000, "enabled": true }
+  ],
+  "fallback": {
+    "enabled": true
+  },
+  "circuitBreaker": {
+    "failureThreshold": 5,
+    "cooldownMs": 10000
+  }
+}

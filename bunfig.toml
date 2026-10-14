@@ -1,0 +1,3 @@
+# `bun test` uses Bun's own runner; the real suite is vitest (Workers pool), so delegate to it.
+[test]
+root = "test/bun"
