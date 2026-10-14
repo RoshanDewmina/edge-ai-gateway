@@ -5,3 +5,4 @@ node_modules/
 NOTES-build.md
 *.log
 .DS_Store
+incident*
