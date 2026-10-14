@@ -11,10 +11,17 @@ export interface Proposal {
   rationale: string;
 }
 
+/** Request fields that change the model's output; ignoring them would let different requests share a cache entry. */
+const OUTPUT_AFFECTING = new Set([
+  "messages", "model", "temperature", "top_p", "top_k", "max_tokens", "max_completion_tokens", "stop", "seed", "n",
+  "tools", "tool_choice", "functions", "function_call", "response_format", "logit_bias", "logprobs", "top_logprobs",
+  "frequency_penalty", "presence_penalty", "reasoning_effort", "stream", "system", "parallel_tool_calls", "modalities", "audio", "prediction",
+]);
+
 const RULES: { pattern: RegExp; valid: (v: unknown) => boolean }[] = [
   { pattern: /^cache\.ttlSeconds$/, valid: (v) => Number.isInteger(v) && (v as number) >= 1 && (v as number) <= 86_400 },
   { pattern: /^cache\.staleWhileRevalidateSeconds$/, valid: (v) => Number.isInteger(v) && (v as number) >= 0 && (v as number) <= 86_400 },
-  { pattern: /^cache\.ignoreFields$/, valid: (v) => Array.isArray(v) && v.every((x) => typeof x === "string" && x !== "messages" && x !== "model") },
+  { pattern: /^cache\.ignoreFields$/, valid: (v) => Array.isArray(v) && v.every((x) => typeof x === "string" && /^[A-Za-z_][A-Za-z0-9_]*$/.test(x) && !OUTPUT_AFFECTING.has(x)) },
   { pattern: /^rateLimit\.(capacity|refillPerSecond)$/, valid: (v) => typeof v === "number" && v > 0 && v <= 100_000 },
   { pattern: /^upstreams\.\d+\.enabled$/, valid: (v) => typeof v === "boolean" },
   { pattern: /^upstreams\.\d+\.timeoutMs$/, valid: (v) => Number.isInteger(v) && (v as number) >= 100 && (v as number) <= 120_000 },

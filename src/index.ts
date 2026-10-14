@@ -113,7 +113,8 @@ async function route(req: Request, env: Env, ctx: ExecutionContext, config: Gate
   }
   if (path === "/metrics" && req.method === "GET") return Response.json(await metricsStub(env).snapshot());
   if (path === "/admin/logs" && req.method === "GET") {
-    const limit = Number(url.searchParams.get("limit") ?? 5000);
+    const raw = Number(url.searchParams.get("limit"));
+    const limit = Number.isInteger(raw) && raw > 0 ? raw : 5000;
     const lines = (await metricsStub(env).logs(limit)).map((e) => JSON.stringify(e)).join("\n");
     return new Response(lines, { headers: { "content-type": "application/x-ndjson" } });
   }
@@ -122,7 +123,7 @@ async function route(req: Request, env: Env, ctx: ExecutionContext, config: Gate
     return Response.json({ ok: true });
   }
   if (path === "/admin/purge" && req.method === "POST") {
-    const { key } = (await req.json()) as { key?: string };
+    const { key } = ((await req.json().catch(() => ({}))) ?? {}) as { key?: string };
     if (!key || !/^[0-9a-f]{64}$/.test(key)) return Response.json({ error: "key must be a 64-char hex cache key" }, { status: 400 });
     const deleted = await caches.default.delete(new Request(CACHE_ORIGIN + key));
     return Response.json({ deleted, scope: "this PoP only" });

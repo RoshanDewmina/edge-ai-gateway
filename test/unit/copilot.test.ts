@@ -43,7 +43,9 @@ describe("config proposals", () => {
   it("validates against an allowlist and never lets every upstream be disabled", () => {
     expect(validateProposal(cfg, { changes: [{ path: "cache.ttlSeconds", from: 300, to: 600 }], rationale: "" })).toEqual([]);
     expect(validateProposal(cfg, { changes: [{ path: "upstreams.0.url", from: "", to: "http://evil" }], rationale: "" })[0]).toMatch(/not tunable/);
-    expect(validateProposal(cfg, { changes: [{ path: "cache.ignoreFields", from: [], to: ["messages"] }], rationale: "" })[0]).toMatch(/invalid/);
+    for (const field of ["messages", "temperature", "tools", "response_format", "messages.0.content"])
+      expect(validateProposal(cfg, { changes: [{ path: "cache.ignoreFields", from: [], to: ["user", field] }], rationale: "" })[0]).toMatch(/invalid/);
+    expect(validateProposal(cfg, { changes: [{ path: "cache.ignoreFields", from: [], to: ["user", "timestamp"] }], rationale: "" })).toEqual([]);
     const both = { changes: [0, 1].map((i) => ({ path: `upstreams.${i}.enabled`, from: true, to: false })), rationale: "" };
     expect(validateProposal(cfg, both)).toContain("proposal would disable every upstream");
   });

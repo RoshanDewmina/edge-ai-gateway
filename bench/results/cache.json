@@ -1,6 +1,6 @@
 {
   "kind": "cache",
-  "run_at": "2026-10-14T13:03:29.769Z",
+  "run_at": "2026-10-14T13:17:36.652Z",
   "env": {
     "os": "darwin arm64",
     "cpu": "Apple M4",
@@ -18,28 +18,28 @@
     "tenants": 1
   },
   "distinct_prompts_requested": 189,
-  "wall_clock_s": 10.74,
+  "wall_clock_s": 10.36,
   "status_counts": {
     "200": 2000
   },
   "by_cache": {
-    "HIT": 1765,
+    "HIT": 1761,
     "STALE": 0,
-    "MISS": 235,
+    "MISS": 239,
     "BYPASS": 0,
     "NONE": 0
   },
-  "hit_ratio": 0.8825,
+  "hit_ratio": 0.8805,
   "client_latency": {
     "HIT": {
-      "n": 1765,
-      "p50_ms": 5.2,
-      "p95_ms": 18.6
+      "n": 1761,
+      "p50_ms": 3.9,
+      "p95_ms": 9
     },
     "MISS": {
-      "n": 235,
-      "p50_ms": 702.4,
-      "p95_ms": 773.5
+      "n": 239,
+      "p50_ms": 696.6,
+      "p95_ms": 764.5
     }
   },
   "upstream_calls": 189,
@@ -47,29 +47,29 @@
   "gateway_metrics": {
     "requests": 2000,
     "by_cache": {
-      "HIT": 1765,
+      "HIT": 1761,
       "STALE": 0,
-      "MISS": 235,
+      "MISS": 239,
       "BYPASS": 0,
       "NONE": 0
     },
-    "hit_ratio": 0.8825,
+    "hit_ratio": 0.8805,
     "latency_ms": {
       "MISS": {
-        "n": 235,
-        "p50": 699,
-        "p95": 767
+        "n": 239,
+        "p50": 693,
+        "p95": 761
       },
       "HIT": {
-        "n": 1765,
-        "p50": 2,
-        "p95": 7
+        "n": 1761,
+        "p50": 1,
+        "p95": 4
       }
     },
     "upstream_calls": 189,
     "upstream_calls_avoided": 1811,
     "fallbacks": 0,
-    "coalesced": 46,
+    "coalesced": 50,
     "errors_by_provider": {},
     "status": {
       "200": 2000

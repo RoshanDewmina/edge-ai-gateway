@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-10-14T13:11:33.358Z",
+  "run_at": "2026-10-14T13:17:22.315Z",
   "mode": "deterministic (no LLM, no API key)",
   "scenarios": 12,
   "root_cause_accuracy": "12/12",
@@ -82,7 +82,7 @@
         "rate_limit_hot_keys"
       ],
       "other_findings": [],
-      "summary": "primary is failing (16% errors overall, peak 48.6% per minute); requests are falling back to secondary."
+      "summary": "primary is failing (18.9% errors overall, peak 81.8% per minute); requests are falling back to secondary."
     },
     {
       "id": "primary_timeout_too_tight",
@@ -102,7 +102,7 @@
         "ttl_churn"
       ],
       "other_findings": [],
-      "summary": "primary is slow but healthy: 11.2% of calls hit the 1000ms timeout while successful calls already take p95 954ms."
+      "summary": "primary is slow but healthy: 17% of calls hit the 1000ms timeout while successful calls already take p95 957ms."
     },
     {
       "id": "tenant_hammering",
@@ -130,7 +130,7 @@
       "predicted_root_cause": "rate_limit_too_low",
       "root_cause_correct": true,
       "fix_correct": true,
-      "fix_detail": "rateLimit.refillPerSecond: 0.2 -> 1.4",
+      "fix_detail": "rateLimit.refillPerSecond: 0.2 -> 1.4; rateLimit.capacity: 5 -> 30",
       "tools_called": [
         "cache_overview",
         "hit_ratio_windows",

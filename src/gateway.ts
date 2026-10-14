@@ -37,8 +37,8 @@ const apiError = (status: number, type: string, message: string, headers: Record
 
 function bearer(req: Request): string | null {
   const auth = req.headers.get("authorization");
-  if (auth?.toLowerCase().startsWith("bearer ")) return auth.slice(7).trim() || null;
-  return req.headers.get("x-api-key");
+  const fromBearer = auth?.toLowerCase().startsWith("bearer ") ? auth.slice(7).trim() : "";
+  return fromBearer || req.headers.get("x-api-key")?.trim() || null;
 }
 
 export async function handleChat(req: Request, deps: GatewayDeps): Promise<Response> {
@@ -49,7 +49,8 @@ export async function handleChat(req: Request, deps: GatewayDeps): Promise<Respo
   const tenant = await shortHash(apiKey, 12);
 
   const base = { ts: start, key_hash: tenant, fallback: false };
-  const finish = (res: Response, e: Omit<LogEvent, "ts" | "key_hash" | "fallback" | "status" | "latency_ms"> & { fallback?: boolean }) => {
+  type EventFields = Omit<LogEvent, "ts" | "key_hash" | "fallback" | "status" | "latency_ms"> & { fallback?: boolean };
+  const finish = (res: Response, e: EventFields) => {
     deps.emit({ ...base, ...e, status: res.status, latency_ms: now() - start });
     return res;
   };
@@ -72,7 +73,7 @@ export async function handleChat(req: Request, deps: GatewayDeps): Promise<Respo
   } catch {
     return finish(apiError(400, "invalid_request_error", "Body must be JSON"), { cache: "NONE", cache_reason: "bad_request" });
   }
-  if (!Array.isArray(body.messages)) {
+  if (!body || typeof body !== "object" || Array.isArray(body) || !Array.isArray(body.messages)) {
     return finish(apiError(400, "invalid_request_error", "`messages` must be an array"), { cache: "NONE", cache_reason: "bad_request" });
   }
   if (body.stream === true) {
@@ -144,8 +145,14 @@ export async function handleChat(req: Request, deps: GatewayDeps): Promise<Respo
         return finish(respond(r, "HIT", headers), { cache: "HIT", age_s: ageS, provider: entry.provider, ...keyInfo });
       } else if (ageS <= ttl + swr) {
         const refresh = fetchAndStore();
-        deps.waitUntil(refresh.promise.catch(() => undefined));
-        return finish(respond(r, "STALE", headers), { cache: "STALE", age_s: ageS, provider: entry.provider, ...keyInfo });
+        const res = respond(r, "STALE", headers);
+        const event = { ...base, cache: "STALE" as const, age_s: ageS, provider: entry.provider, ...keyInfo, status: res.status, latency_ms: now() - start };
+        deps.waitUntil(
+          refresh.promise
+            .then((rr) => (refresh.coalesced ? event : { ...event, attempts: rr.attempts, fallback: rr.attempts.length > 1 }), () => event)
+            .then((e) => deps.emit(e)),
+        );
+        return res;
       } else {
         missReason = "expired";
       }

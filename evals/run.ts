@@ -30,7 +30,7 @@ function fixCorrect(expected: ExpectedFix | null, d: Diagnosis, config: GatewayC
   if (expected.equals !== undefined && c.to !== expected.equals) return { ok: false, why: `${expected.path} = ${JSON.stringify(c.to)}` };
   if (expected.gte !== undefined && !(typeof c.to === "number" && c.to >= expected.gte)) return { ok: false, why: `${expected.path} = ${c.to} < ${expected.gte}` };
   if (expected.gtCurrent && !(typeof c.to === "number" && typeof current === "number" && c.to > current)) return { ok: false, why: `${expected.path} not increased` };
-  return { ok: true, why: `${expected.path}: ${JSON.stringify(c.from)} -> ${JSON.stringify(c.to)}` };
+  return { ok: true, why: d.proposal.changes.map((x) => `${x.path}: ${JSON.stringify(x.from)} -> ${JSON.stringify(x.to)}`).join("; ") };
 }
 
 const scenarios = loadScenarios();

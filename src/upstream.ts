@@ -21,8 +21,6 @@ export class BreakerRegistry {
   }
 }
 
-const RETRYABLE: AttemptOutcome[] = ["5xx", "429", "timeout", "network"];
-
 function classify(status: number): AttemptOutcome {
   if (status >= 500) return "5xx";
   if (status === 429) return "429";
@@ -76,7 +74,6 @@ export async function callUpstreams(body: string, upstreams: UpstreamConfig[], o
     }
     breaker.onFailure(opts.now());
     if (status !== undefined) last = { status, body: text };
-    if (!RETRYABLE.includes(outcome)) break;
   }
 
   const allOpen = attempts.length > 0 && attempts.every((a) => a.outcome === "circuit_open");

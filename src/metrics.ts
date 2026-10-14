@@ -49,7 +49,7 @@ export class MetricsAggregator {
     if (arr.length > RING) arr.shift();
     const realCalls = (e.attempts ?? []).filter((a) => a.outcome !== "circuit_open");
     this.upstreamCalls += realCalls.length;
-    if (e.cache === "HIT" || e.cache === "STALE" || e.coalesced) this.avoided++;
+    if ((e.cache === "HIT" || e.cache === "STALE" || e.coalesced) && realCalls.length === 0) this.avoided++;
     if (e.fallback) this.fallbacks++;
     if (e.coalesced) this.coalesced++;
     for (const a of e.attempts ?? []) {

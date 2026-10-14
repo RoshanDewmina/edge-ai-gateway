@@ -116,6 +116,8 @@ describe("gateway caching (in-memory edge cache, fake clock)", () => {
     const r = await g.send(prompt);
     expect(r.headers.get("x-cache")).toBe("STALE");
     expect(g.upstreamCalls).toBe(2);
+    expect(g.logs.at(-1)).toMatchObject({ cache: "STALE", age_s: 15 });
+    expect(g.logs.at(-1)?.attempts?.[0]).toMatchObject({ provider: "primary", outcome: "ok" });
     expect((await g.send(prompt)).headers.get("x-cache")).toBe("HIT");
     g.advance(60_000);
     expect((await g.send(prompt)).headers.get("x-cache")).toBe("MISS");
@@ -160,6 +162,7 @@ describe("gateway caching (in-memory edge cache, fake clock)", () => {
   it("rejects streaming and missing keys explicitly", async () => {
     const g = setup();
     expect((await g.send({ ...prompt, stream: true })).status).toBe(400);
+    for (const bad of [null, [], "x", { messages: "hi" }]) expect((await g.send(bad as never)).status).toBe(400);
     const res = await handleChat(new Request("https://gw/v1/chat/completions", { method: "POST", body: "{}" }), { now: () => 0 } as never);
     expect(res.status).toBe(401);
   });

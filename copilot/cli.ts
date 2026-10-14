@@ -83,7 +83,7 @@ if (!has("json")) {
 if (has("apply")) {
   if (!existsSync(configPath)) throw new Error(`${configPath} not found`);
   writeFileSync(configPath, formatConfig(next));
-  console.log(`\nApplied to ${configPath}. Redeploy (or restart wrangler dev) to take effect.`);
+  console.error(`\nApplied to ${configPath}. Redeploy (or restart wrangler dev) to take effect.`);
 } else if (!has("json")) {
   console.log(`\nNot applied. Re-run with --apply to write ${configPath}.`);
 }
