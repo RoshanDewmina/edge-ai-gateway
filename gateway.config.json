@@ -6,7 +6,7 @@
     "maxCacheableTemperature": 0,
     "scope": "tenant",
     "keyVersion": 1,
-    "caseFold": true,
+    "caseFold": false,
     "ignoreFields": [
       "user",
       "request_id",

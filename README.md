@@ -4,10 +4,10 @@ An OpenAI-compatible LLM gateway that runs at the edge on Cloudflare Workers. An
 
 In a local benchmark against a simulated provider with 700 ms latency, the gateway did the following:
 
-- served **88.1%** of 2,000 Zipf-distributed requests from cache;
-- answered cache hits at **3.9 ms p50**, against **697 ms** for misses;
-- avoided **90.6%** of upstream calls;
-- kept success at **100%** under a 30% primary failure rate, against **65.8%** without fallback.
+- served **84.8%** of 2,000 Zipf-distributed requests from cache;
+- answered cache hits at **2.9 ms p50**, against **701 ms** for misses;
+- avoided **86.6%** of upstream calls;
+- kept success at **100%** under a 30% primary failure rate, against **69.2%** without fallback.
 
 All of these are local runs against a simulated provider (details below).
 
@@ -82,18 +82,18 @@ To point an existing OpenAI-SDK app at the gateway, set `baseURL: "http://127.0.
 
 | Metric | Value |
 |---|---|
-| Hit ratio (HIT / cacheable lookups) | **88.05%** (1,761 HIT, 239 MISS, 50 of the misses coalesced) |
-| HIT latency, client-observed p50 / p95 | **3.9 ms / 9.0 ms** |
-| MISS latency, client-observed p50 / p95 | **696.6 ms / 764.5 ms** |
-| Upstream calls (counted at the mock) | **189 / 2,000** (one per distinct prompt) |
-| Upstream calls avoided | **90.55%** |
+| Hit ratio (HIT / cacheable lookups) | **84.75%** (1,695 HIT, 305 MISS, 37 of the misses coalesced) |
+| HIT latency, client-observed p50 / p95 | **2.9 ms / 7.7 ms** |
+| MISS latency, client-observed p50 / p95 | **701 ms / 767.3 ms** |
+| Upstream calls (counted at the mock) | **268 / 2,000** (189 distinct prompts; upper-case variants are separate keys because case folding is off by default) |
+| Upstream calls avoided | **86.6%** |
 
 **Fallback.** The cache was bypassed with `no-store`, so every request went upstream. The primary returned 503 on 30% of calls, and the secondary was healthy. Each mode ran 500 requests.
 
 | Mode | Success rate | Status codes | p50 / p95 latency of successes |
 |---|---|---|---|
-| Fallback enabled | **100%** | 500 × 200 | 736.7 ms / 1,480.8 ms (failed primary + secondary ≈ 2 round trips) |
-| Fallback disabled | **65.8%** | 329 × 200, 165 × 502, 6 × 503 (breaker open, fail fast) | 711.3 ms / 772.4 ms |
+| Fallback enabled | **100%** | 500 × 200 | 733 ms / 1,471.8 ms (failed primary + secondary ≈ 2 round trips) |
+| Fallback disabled | **69.2%** | 346 × 200, 154 × 502 | 711 ms / 772 ms |
 
 ### Copilot evals (`evals/results.json`)
 
@@ -138,7 +138,7 @@ Run it with `bun run copilot "<question>"`.
 - **Only temperature-0 requests are cacheable by default.** A request with temperature > 0 asks for a sample, so a cached answer would quietly turn "varied output" into "the same output for everyone for 5 minutes". A missing temperature counts as the provider default of 1. Even at temperature 0, providers aren't bit-for-bit deterministic, so the cache makes repeated answers *more* consistent. That is usually what an app wants, and it is the cost of the hit ratio.
 - **The cache key uses a denylist, not an allowlist.** Every body field is part of the key unless it is explicitly ignored. The cost is that a junk field (a timestamp, a UUID) busts the cache, which is exactly what the copilot's `cache_key_cardinality` tool catches. An allowlist would fail the other way: a new output-changing parameter (`response_format`, `tools`, a new provider flag) would be answered from an entry created without it. A wrong answer is worse than a miss.
 - **Keys are scoped per tenant, with privacy in mind.** By default the hashed API key is part of the cache key, so tenant B can never receive tenant A's cached completion. B also can't infer from a fast HIT that someone else asked the same thing. `cache.scope: "global"` is opt-in, for public, non-sensitive prompts. Logs contain only hashes (key, prompt, per-field), never prompt text.
-- **Case folding** (`cache.caseFold`, on by default) raises the hit ratio for chat-style prompts. It can conflate prompts where case carries meaning, such as code or acronyms, so it can be turned off per deployment.
+- **Case folding** (`cache.caseFold`) is **off by default**. Folding raises the hit ratio for chat-style prompts, but it can merge prompts where case changes the answer (code, acronyms), and a wrong answer is worse than a miss. Turn it on per deployment when prompts are case-insensitive.
 - **The rate limit runs before the cache.** Cached responses still count against a key's bucket. This protects the gateway itself, not just the provider, at the cost of one Durable Object round trip on every request.
 - **The circuit breaker counts consecutive failures, per isolate.** It is simple and cheap. The copilot's own evidence shows its weakness: with errors interleaved with successes (40% 5xx), it trips only intermittently. A failure-rate window, or breaker state shared through a Durable Object, would fix that.
 - **What semantic caching would add, and the risk.** Embedding-similarity lookup would catch paraphrases that exact-match keys miss. The risk is a false hit: "cancel my order" and "don't cancel my order" embed close together, and the gateway would confidently serve the wrong answer. It would need conservative thresholds, per-tenant scope, an eval set of near-miss pairs, and probably opt-in per route. It is listed as a next step, not built.

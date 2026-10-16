@@ -1,6 +1,6 @@
 {
   "kind": "fallback",
-  "run_at": "2026-10-14T13:18:29.811Z",
+  "run_at": "2026-10-16T21:13:28.058Z",
   "env": {
     "os": "darwin arm64",
     "cpu": "Apple M4",
@@ -23,21 +23,21 @@
     },
     "client_latency_all": {
       "n": 500,
-      "p50_ms": 736.7,
-      "p95_ms": 1480.8
+      "p50_ms": 733,
+      "p95_ms": 1471.8
     },
     "client_latency_success": {
       "n": 500,
-      "p50_ms": 736.7,
-      "p95_ms": 1480.8
+      "p50_ms": 733,
+      "p95_ms": 1471.8
     },
     "mock_upstream_calls": {
       "primary": {
         "total": 500,
-        "failed": 148
+        "failed": 149
       },
       "secondary": {
-        "total": 148,
+        "total": 149,
         "failed": 0
       }
     },
@@ -54,17 +54,17 @@
       "latency_ms": {
         "BYPASS": {
           "n": 500,
-          "p50": 732,
-          "p95": 1476
+          "p50": 728,
+          "p95": 1467
         }
       },
-      "upstream_calls": 648,
+      "upstream_calls": 649,
       "upstream_calls_avoided": 0,
-      "fallbacks": 148,
+      "fallbacks": 149,
       "coalesced": 0,
       "errors_by_provider": {
         "primary": {
-          "5xx": 148
+          "5xx": 149
         }
       },
       "status": {
@@ -76,26 +76,25 @@
   },
   "fallback_disabled": {
     "requests": 500,
-    "success_rate": 0.658,
+    "success_rate": 0.692,
     "status_counts": {
-      "200": 329,
-      "502": 165,
-      "503": 6
+      "200": 346,
+      "502": 154
     },
     "client_latency_all": {
       "n": 500,
-      "p50_ms": 710.5,
-      "p95_ms": 771.2
+      "p50_ms": 711.3,
+      "p95_ms": 772
     },
     "client_latency_success": {
-      "n": 329,
-      "p50_ms": 711.3,
-      "p95_ms": 772.4
+      "n": 346,
+      "p50_ms": 711,
+      "p95_ms": 772
     },
     "mock_upstream_calls": {
       "primary": {
-        "total": 494,
-        "failed": 165
+        "total": 500,
+        "failed": 154
       },
       "secondary": {
         "total": 0,
@@ -115,24 +114,22 @@
       "latency_ms": {
         "BYPASS": {
           "n": 500,
-          "p50": 707,
+          "p50": 706,
           "p95": 768
         }
       },
-      "upstream_calls": 494,
+      "upstream_calls": 500,
       "upstream_calls_avoided": 0,
       "fallbacks": 0,
       "coalesced": 0,
       "errors_by_provider": {
         "primary": {
-          "5xx": 165,
-          "circuit_open": 6
+          "5xx": 154
         }
       },
       "status": {
-        "200": 329,
-        "502": 165,
-        "503": 6
+        "200": 346,
+        "502": 154
       },
       "rate_limited": 0,
       "window_note": "counters since last reset; latency percentiles over the last 5000 requests per cache status"

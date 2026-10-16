@@ -72,7 +72,7 @@ describe("gateway caching (in-memory edge cache, fake clock)", () => {
     const a = await g.send(prompt);
     expect(a.headers.get("x-cache")).toBe("MISS");
     g.advance(7_000);
-    const b = await g.send({ ...prompt, messages: [{ role: "user", content: "  HELLO " }] });
+    const b = await g.send({ ...prompt, messages: [{ role: "user", content: "  hello  " }] });
     expect(b.headers.get("x-cache")).toBe("HIT");
     expect(b.headers.get("age")).toBe("7");
     expect(await b.json()).toEqual(await a.json());

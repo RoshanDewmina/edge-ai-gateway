@@ -1,6 +1,6 @@
 {
   "kind": "cache",
-  "run_at": "2026-10-14T13:17:36.652Z",
+  "run_at": "2026-10-16T21:12:34.602Z",
   "env": {
     "os": "darwin arm64",
     "cpu": "Apple M4",
@@ -18,58 +18,58 @@
     "tenants": 1
   },
   "distinct_prompts_requested": 189,
-  "wall_clock_s": 10.36,
+  "wall_clock_s": 13.21,
   "status_counts": {
     "200": 2000
   },
   "by_cache": {
-    "HIT": 1761,
+    "HIT": 1695,
     "STALE": 0,
-    "MISS": 239,
+    "MISS": 305,
     "BYPASS": 0,
     "NONE": 0
   },
-  "hit_ratio": 0.8805,
+  "hit_ratio": 0.8475,
   "client_latency": {
     "HIT": {
-      "n": 1761,
-      "p50_ms": 3.9,
-      "p95_ms": 9
+      "n": 1695,
+      "p50_ms": 2.9,
+      "p95_ms": 7.7
     },
     "MISS": {
-      "n": 239,
-      "p50_ms": 696.6,
-      "p95_ms": 764.5
+      "n": 305,
+      "p50_ms": 701,
+      "p95_ms": 767.3
     }
   },
-  "upstream_calls": 189,
-  "upstream_calls_avoided_pct": 90.55,
+  "upstream_calls": 268,
+  "upstream_calls_avoided_pct": 86.6,
   "gateway_metrics": {
     "requests": 2000,
     "by_cache": {
-      "HIT": 1761,
+      "HIT": 1695,
       "STALE": 0,
-      "MISS": 239,
+      "MISS": 305,
       "BYPASS": 0,
       "NONE": 0
     },
-    "hit_ratio": 0.8805,
+    "hit_ratio": 0.8475,
     "latency_ms": {
       "MISS": {
-        "n": 239,
-        "p50": 693,
-        "p95": 761
+        "n": 305,
+        "p50": 699,
+        "p95": 764
       },
       "HIT": {
-        "n": 1761,
+        "n": 1695,
         "p50": 1,
-        "p95": 4
+        "p95": 3
       }
     },
-    "upstream_calls": 189,
-    "upstream_calls_avoided": 1811,
+    "upstream_calls": 268,
+    "upstream_calls_avoided": 1732,
     "fallbacks": 0,
-    "coalesced": 50,
+    "coalesced": 37,
     "errors_by_provider": {},
     "status": {
       "200": 2000

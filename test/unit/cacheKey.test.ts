@@ -7,9 +7,15 @@ const base = { model: "gpt-x", temperature: 0, messages: [{ role: "user", conten
 const key = async (b: Record<string, unknown>, tenant = "t1", c = cfg) => (await buildCacheKey(b, c, tenant)).key;
 
 describe("cache key normalization", () => {
-  it("ignores whitespace and casing differences in message content and model", async () => {
-    const variant = { model: " GPT-X ", temperature: 0, messages: [{ role: "USER", content: "  what   is a\n cdn? " }] };
+  it("ignores whitespace differences in message content and model/role casing", async () => {
+    const variant = { model: " GPT-X ", temperature: 0, messages: [{ role: "USER", content: "  What   is a\n CDN? " }] };
     expect(await key(variant)).toBe(await key(base));
+  });
+
+  it("folds content case only when caseFold is on", async () => {
+    const c = { ...cfg, caseFold: true };
+    const lower = { ...base, messages: [{ role: "user", content: "what is a cdn?" }] };
+    expect(await key(lower, "t1", c)).toBe(await key(base, "t1", c));
   });
 
   it("is independent of JSON key order", async () => {
@@ -42,8 +48,8 @@ describe("cache key normalization", () => {
     expect(await key(base, "t1", { ...cfg, keyVersion: 2 })).not.toBe(await key(base));
   });
 
-  it("can keep case when caseFold is off", async () => {
-    const c = { ...cfg, caseFold: false };
+  it("keeps content case by default, since case can change the answer", async () => {
+    const c = cfg;
     const upper = { ...base, messages: [{ role: "user", content: "WHAT IS A CDN?" }] };
     expect(await key(upper, "t1", c)).not.toBe(await key(base, "t1", c));
   });

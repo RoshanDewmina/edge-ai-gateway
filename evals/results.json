@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-10-14T13:17:22.315Z",
+  "run_at": "2026-10-16T21:14:06.359Z",
   "mode": "deterministic (no LLM, no API key)",
   "scenarios": 12,
   "root_cause_accuracy": "12/12",
